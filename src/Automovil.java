@@ -3,7 +3,7 @@ public class Automovil {
     private long id;
     private String manufacturer;
     private String model;
-    private String color;
+    private Color color;
     private double cylinder;
     private boolean avalaible ;
     private int year;
@@ -12,7 +12,7 @@ public class Automovil {
 
     public Automovil(){}
 
-    public Automovil(long id, String manufacturer, String model, String color, double cylinder, boolean avalaible, int year, double price, int km){
+    public Automovil(long id, String manufacturer, String model, Color color, double cylinder, boolean avalaible, int year, double price, int km){
         this.id = id;
         this.manufacturer  = manufacturer;
         this.model = model;
@@ -60,10 +60,13 @@ public class Automovil {
     public void setModel(String model){ this.model = model; }
     public String getModel(){ return model; }
 
+    public Color getColor() {
+        return color;
+    }
 
-    public void setColor(String color) {this.color = color;}
-    public String getColor(){return color;}
-
+    public void setColor(Color color) {
+        this.color = color;
+    }
 
     public void setCylinder(double cylinder){this.cylinder = cylinder;}
     public double getCylinder(){return cylinder;}

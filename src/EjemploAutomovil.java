@@ -1,13 +1,13 @@
 import javax.swing.*;
+import java.sql.SQLOutput;
 
 public class EjemploAutomovil {
     public static void main(String[] args) {
 
-        Automovil automovilHonda  = new Automovil(1, "Honda", "Civic", "Blanco", 2.5, true, 2010, 100000, 40);
-        Automovil camionetaSuzuki  = new Automovil(2, "Suzuki", "Vitara live", "Azul", 2.0, true, 2021, 200000,90 );
-        Automovil automovilSuzuki  = new Automovil(3, "Suzuki", "Desing", "Negro", 0.8, true, 2022, 150000,110 );
-        Automovil automovilRenault  = new Automovil(4, "Renault", "Logan", "Gris", 1.4, true, 2019, 90000,60 );
-
+        Automovil automovilHonda  = new Automovil(1, "Honda", "Civic", Color.BLANCO, 2.5, true, 2010, 100000, 40);
+        Automovil camionetaSuzuki  = new Automovil(2, "Suzuki", "Vitara live",Color.AZUL, 2.0, true, 2021, 200000,90 );
+        Automovil automovilSuzuki  = new Automovil(3, "Suzuki", "Desing",Color.NEGRO, 0.8, true, 2022, 150000,110 );
+        Automovil automovilRenault  = new Automovil(4, "Renault", "Logan", Color.ROJO, 1.4, true, 2019, 90000,60 );
 
         System.out.println(automovilHonda.detail());
         System.out.println("****************************************\n\n\n");
@@ -18,6 +18,9 @@ public class EjemploAutomovil {
         System.out.println(automovilRenault.detail());
         System.out.println("****************************************\n\n\n");
 
+        System.out.println(automovilHonda.getColor().getColor());
+        System.out.println(automovilHonda.getColor().getColor());
+        System.out.println(automovilHonda.getColor());
 
         int entrada = Integer.parseInt(JOptionPane.showInputDialog("Ingrese el ID del automovil a seleccionar"));
         int km = Integer.parseInt(JOptionPane.showInputDialog("Ingrese la distancia a recorer en km"));
