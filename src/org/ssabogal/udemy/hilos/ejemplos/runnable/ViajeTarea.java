@@ -5,7 +5,7 @@ import java.util.Random;
 public class ViajeTarea implements Runnable{
 
     String nombre;
-    ViajeTarea(String nombre){
+    public ViajeTarea(String nombre){
         this.nombre = nombre;
     }
     @Override
@@ -19,5 +19,6 @@ public class ViajeTarea implements Runnable{
                  throw new RuntimeException(e);
              }
          }
+        System.out.println("Finalizanda tarea " + this.nombre);
     }
 }
