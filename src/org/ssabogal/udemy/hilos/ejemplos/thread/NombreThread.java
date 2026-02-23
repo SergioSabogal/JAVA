@@ -1,4 +1,4 @@
-package org.ssabogal.udemy.hilos.ejemplos;
+package org.ssabogal.udemy.hilos.ejemplos.thread;
 
 import java.time.LocalDateTime;
 
