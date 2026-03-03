@@ -1,11 +1,11 @@
 package org.ssabogal.udemy.hilos.ejemploexecutor;
 
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-public class EjemploExecutorFuture {
+public class EjemploExecutor {
     public static void main(String[] args) throws InterruptedException {
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -22,11 +22,10 @@ public class EjemploExecutorFuture {
             System.out.println("Fin de la tarea...");
         };
 
-        Future<?> resultado = executor.submit(tarea);
+        executor.submit(tarea);
         executor.shutdown();
-        System.out.println("Continuando con el metodo main ");
-
-        System.out.println("Resultado: "+ resultado.isDone());
-
+        System.out.println("Continuando con el metodo main 1");
+        executor.awaitTermination(2, TimeUnit.SECONDS);
+        System.out.println("Ontinuando con el metodo main 2");
     }
 }
