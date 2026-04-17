@@ -9,6 +9,4 @@ public class EjemploGenericos {
         List clientes = new ArrayList();
     }
 
-
-    public static
 }
