@@ -1,4 +1,9 @@
 package org.ssabogal.udemy.excepciones.ejemplo;
 
 public class Calculadora {
+    private int operadorA;
+    private int operadorB;
+
+
+    public static
 }
