@@ -1,5 +1,7 @@
 package org.ssabogal.udemy.colecciones.modelo;
 
+import java.util.Objects;
+
 public class Alumno implements Comparable<Alumno> {
     @Override
     public int compareTo(Alumno a) {
@@ -43,5 +45,17 @@ public class Alumno implements Comparable<Alumno> {
                 "nombre='" + nombre + '\'' +
                 ", nota=" + nota +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Alumno alumno = (Alumno) o;
+        return Objects.equals(nombre, alumno.nombre) && Objects.equals(nota, alumno.nota);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(nombre, nota);
     }
 }
