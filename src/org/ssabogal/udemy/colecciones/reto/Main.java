@@ -1,27 +1,32 @@
 package org.ssabogal.udemy.colecciones.reto;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
+import static org.ssabogal.udemy.colecciones.reto.util.FileUtils.cargarVuelos_csv;
+
 public class Main {
 
-    /**
-     * @author : Sergio Sabogal
-     *
-     * Una lista de objetos List del tipo Vuelo que mantenga el mismo orden de registro de la tabla.
-     *
-     * La clase Vuelo debe contener los atributos nombre (string), origen (string), destino (string), fecha de llegada que incluya fecha y hora (java.util.Date) y cantidad de pasajeros.
-     *
-     * Se pide ordenar por llagada de forma ascendente, obtener el ultimo vuelo en llegar y también se pide el vuelo que tiene menor número de pasajeros.
-     *
-     * Como recurso se adjunta la tabla en Excel.
-     *
-     * El resultado final debería ser, similar a:
-     *
-     * ... listado ordenado por fecha llegada ascendente ...
-     * El último vuelo en llegar es CMP 111: Panama City, aterriza el Tue Aug 31 15:15:00 2021
-     * El vuelo con menor número de pasajeros es AVA 241: Bogota, con 25 pasajeros.
-    **/
     public static void main(String[] args){
+        List<Vuelo> vuelos = new ArrayList<> (cargarVuelos_csv());
+        List<Vuelo> vueloList = new ArrayList<> (vuelos);
 
+        System.out.println("Vuelo por orden de llegadas");
+        vueloList.sort(Comparator.comparing(Vuelo::getFechaLlegada).thenComparing(Vuelo::getHora_llegada));
+        vueloList.forEach(System.out::println);
 
+        System.out.println();
+        System.out.println("Ultimo vuelo en llegar");
+        System.out.println(vueloList.getLast());
+        System.out.println();
+
+        vueloList.sort(Comparator.comparing(Vuelo::getNumeroPasaderos));
+        System.out.println("Vuelo con menor numero de pasajeros");
+        System.out.println(vueloList.getFirst());
 
     }
+
+
+
 }

@@ -5,5 +5,4 @@ public class Calculadora {
     private int operadorB;
 
 
-    public static
 }
