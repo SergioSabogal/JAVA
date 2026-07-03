@@ -1,0 +1,294 @@
+# Retos de Concurrencia en Java — Ruta de Entrenamiento
+
+Ruta progresiva: primero fundamentos (Thread/Runnable), luego sincronización, luego Executor Framework
+(que es lo que realmente se usa en producción hoy en día), y al final un proyecto integrador.
+
+
+**Recomendación de trabajo:** no leas la solución en tu cabeza — escribe el código, corre, rompe, depura.
+La concurrencia se entiende viendo race conditions reales, no leyendo teoría.
+
+---
+
+## 1. Hilos heredando la clase `Thread`
+
+### Reto 1.1 — Básico
+Crea una clase `ContadorThread` que extienda `Thread` y en su `run()` imprima números del 1 al 10 con un
+`Thread.sleep(200)` entre cada uno. Lanza 3 instancias y observa el orden de salida (no será secuencial).
+
+### Reto 1.2 — Intermedio
+Crea 2 hilos heredando de `Thread`: uno que imprime letras A-Z y otro que imprime números 1-26, ambos
+corriendo simultáneamente. Usa `Thread.currentThread().getName()` para identificar cuál hilo imprime qué.
+
+### Reto 1.3 — Reflexión
+Responde en un comentario: ¿por qué NO es buena práctica extender `Thread` en proyectos reales?
+(pista: herencia simple en Java, acoplamiento).
+
+---
+
+## 2. Hilos con la interfaz `Runnable`
+
+### Reto 2.1 — Básico
+Repite el reto 1.1 pero implementando `Runnable` en vez de extender `Thread`. Nota la diferencia:
+ahora tu clase puede extender otra cosa si lo necesita.
+
+### Reto 2.2 — Intermedio
+Crea una clase `DescargaArchivo implements Runnable` que reciba un nombre de archivo en el constructor
+y simule una descarga (`Thread.sleep` aleatorio entre 500-2000ms) imprimiendo progreso cada 25%.
+Lanza 5 "descargas" simultáneas con nombres distintos.
+
+### Reto 2.3 — Comparación
+Escribe el mismo ejercicio (2.2) usando una **clase anónima** que implemente `Runnable`,
+sin crear un archivo `.java` aparte.
+
+---
+
+## 3. Hilos con expresiones lambda
+
+### Reto 3.1 — Básico
+Reescribe el Reto 2.1 usando una lambda en lugar de una clase que implementa `Runnable`.
+
+### Reto 3.2 — Intermedio
+Crea un `List<Runnable>` con 5 tareas lambda distintas (cada una imprime un mensaje diferente y
+duerme un tiempo distinto). Recórrelo con un `for` y lanza un `Thread` nuevo por cada una.
+
+### Reto 3.3 — Reto de estilo
+Toma el código del Reto 2.2 (con clase `DescargaArchivo`) y decide: ¿tiene sentido convertirlo a lambda?
+Justifica cuándo SÍ conviene usar lambda vs. cuándo conviene una clase con estado propio.
+
+---
+
+## 4. `join()` vs `sleep()`
+
+### Reto 4.1 — Básico
+Crea 3 hilos que hacen una tarea de 1 segundo cada uno. Sin usar `join()`, imprime "Todos terminaron"
+al final del `main`. Observa que probablemente se imprime ANTES de que terminen los hilos.
+
+### Reto 4.2 — Corrección con join
+Corrige el Reto 4.1 usando `join()` en cada hilo para que "Todos terminaron" se imprima solo cuando de
+verdad terminen.
+
+### Reto 4.3 — join con timeout
+Crea un hilo que simula una tarea de 5 segundos. En el `main`, usa `join(2000)` (timeout de 2 segundos)
+y, si el hilo sigue vivo después del timeout, imprime "La tarea está tardando demasiado" sin matar el hilo.
+
+### Reto 4.4 — Reflexión
+Explica con tus palabras la diferencia conceptual: `sleep()` pausa el hilo actual sin liberar locks;
+`join()` hace que el hilo actual espere a que OTRO hilo termine. ¿En qué escenario real usarías cada uno?
+
+---
+
+## 5. Modificador `synchronized`
+
+### Reto 5.1 — El problema (sin sincronizar)
+Crea una clase `Contador` con un método `incrementar()` que hace `contador++`. Lanza 1000 hilos que llaman
+`incrementar()` una vez cada uno. Al final imprime el valor — probablemente NO será 1000. Este es tu "race
+condition" de práctica.
+
+### Reto 5.2 — Solución con método synchronized
+Corrige el Reto 5.1 agregando `synchronized` al método `incrementar()`. Verifica que ahora sí da 1000 siempre.
+
+### Reto 5.3 — synchronized en bloque
+Reescribe el Reto 5.2 pero en vez de sincronizar todo el método, sincroniza solo la línea `contador++`
+usando un bloque `synchronized(this)`. Piensa: ¿por qué sincronizar bloques específicos suele ser mejor
+que sincronizar el método completo?
+
+### Reto 5.4 — Objeto de lock dedicado
+Crea una clase con DOS contadores independientes (`contadorA`, `contadorB`) y usa un objeto `Object lockA`
+y `Object lockB` distinto para cada uno, de forma que incrementar A no bloquee a B. Demuestra con hilos
+concurrentes que ambos contadores llegan a su valor correcto y que no se bloquean mutuamente.
+
+---
+
+## 6. `wait()` y `notify()` — Productor-Consumidor
+
+### Reto 6.1 — Buffer de tamaño 1
+Implementa el clásico problema productor-consumidor con un buffer de capacidad 1:
+- `Productor`: genera números del 1 al 10, los pone en el buffer, y espera (`wait()`) si el buffer ya
+tiene un dato sin consumir.
+- `Consumidor`: saca el dato del buffer y espera (`wait()`) si está vacío.
+- Usa `notify()` para despertar al hilo contrario cuando el estado cambia.
+
+### Reto 6.2 — Buffer con cola (capacidad N)
+Extiende el Reto 6.1 para que el buffer sea una `Queue` con capacidad de 5 elementos. El productor espera
+si está lleno, el consumidor espera si está vacío.
+
+### Reto 6.3 — Múltiples productores y consumidores
+Extiende el Reto 6.2 a 3 productores y 2 consumidores simultáneos. Aquí vas a necesitar `notifyAll()` en
+vez de `notify()` — investiga por qué (pista: "missed signal" y múltiples hilos esperando la misma condición).
+
+### Reto 6.4 — Comparación con la industria
+Investiga y anota en un comentario: ¿qué clase de `java.util.concurrent` reemplaza todo este patrón
+wait/notify en código moderno? (spoiler: la usarás en el Reto 13).
+
+---
+
+## 7. `Timer` y `TimerTask`
+
+### Reto 7.1 — Básico
+Usa `Timer` y `TimerTask` para ejecutar una tarea única que imprima "¡Han pasado 3 segundos!" después
+de un delay de 3000ms.
+
+### Reto 7.2 — Cancelación
+Programa una tarea a 5 segundos, pero desde el `main`, después de 2 segundos, cancela el `Timer` antes
+de que se ejecute. Verifica que nunca se imprime el mensaje.
+
+---
+
+## 8. Tareas programadas que se repiten (con `Timer`)
+
+### Reto 8.1 — scheduleAtFixedRate
+Usa `Timer.scheduleAtFixedRate()` para imprimir "tick" cada 1 segundo, empezando inmediatamente.
+Detén el timer después de 5 repeticiones usando un contador dentro del `TimerTask`.
+
+### Reto 8.2 — schedule vs scheduleAtFixedRate
+Investiga y demuestra con código la diferencia entre `schedule()` (fixed-delay) y `scheduleAtFixedRate()`
+(fixed-rate) cuando una tarea tarda más de lo esperado en ejecutarse. Simula esto con un `Thread.sleep`
+largo dentro de la tarea.
+
+---
+
+## 9. Executor Framework — `SingleThreadExecutor`
+
+### Reto 9.1 — Básico
+Reemplaza el patrón manual `new Thread(runnable).start()` por un `Executors.newSingleThreadExecutor()`.
+Envía 5 tareas (`Runnable`) y observa que se ejecutan en orden, una tras otra (a diferencia de hilos independientes).
+
+### Reto 9.2 — Shutdown correcto
+Repite el Reto 9.1 pero asegúrate de cerrar el executor correctamente con `shutdown()` y
+`awaitTermination()`. Explica en un comentario qué pasaría si nunca llamas `shutdown()`
+en una app real (pista: hilos huérfanos, la JVM no termina).
+
+---
+
+## 10. `Future`
+
+### Reto 10.1 — Básico
+Usa un `ExecutorService` con `submit()` (no `execute()`) para lanzar una tarea `Callable<Integer>`
+que calcule la suma de 1 a 1,000,000. Recupera el resultado con `future.get()`.
+
+### Reto 10.2 — Múltiples futures
+Lanza 5 tareas `Callable` que cada una calcule el factorial de un número distinto (5!, 10!, 15!, etc).
+Guarda los `Future<Long>` en una lista y al final recórrela imprimiendo cada resultado con `.get()`.
+
+### Reto 10.3 — Timeout y cancelación
+Lanza una tarea que tarda 10 segundos. Usa `future.get(3, TimeUnit.SECONDS)` con try-catch para
+`TimeoutException`, y si hace timeout, cancela la tarea con `future.cancel(true)`.
+
+---
+
+## 11. `FixedThreadPool`
+
+### Reto 11.1 — Básico
+Crea un `Executors.newFixedThreadPool(3)` y envíale 10 tareas. Observa (imprimiendo el nombre del hilo)
+cómo solo 3 tareas corren "a la vez" y las demás esperan en cola.
+
+### Reto 11.2 — Comparación de rendimiento
+Compara el tiempo total de ejecutar 20 tareas (cada una con `sleep(500)`) usando: (a) un
+`newFixedThreadPool(2)`, (b) un `newFixedThreadPool(10)`. Mide el tiempo con `System.currentTimeMillis()`
+y explica la diferencia.
+
+---
+
+## 12. Executor Framework personalizado (`ThreadPoolExecutor`)
+
+### Reto 12.1 — Básico
+En vez de usar los factory methods de `Executors`, crea un `ThreadPoolExecutor`
+manualmente especificando: `corePoolSize=2`, `maximumPoolSize=4`, `keepAliveTime=10s`, y una
+`LinkedBlockingQueue` de capacidad 5.
+
+### Reto 12.2 — Observar el comportamiento bajo carga
+Envía 15 tareas de golpe al pool del Reto 12.1 (cada una con `sleep(2000)`). Imprime `getPoolSize()`,
+`getActiveCount()` y `getQueue().size()` cada segundo desde el `main` para observar cómo el pool crece
+de 2 a 4 hilos y cómo se llena la cola.
+
+### Reto 12.3 — RejectedExecutionHandler
+Reduce la cola a capacidad 2 y el `maximumPoolSize` a 3, y envía 10 tareas de golpe. Sin manejar el
+rechazo, verás una excepción. Implementa un `RejectedExecutionHandler` personalizado (o usa
+`ThreadPoolExecutor.CallerRunsPolicy`) que maneje el desborde de forma controlada.
+
+### Reto 12.4 — Reflexión de industria
+Investiga por qué Effective Java / muchos equipos recomiendan usar `ThreadPoolExecutor` explícito
+en vez de los métodos de conveniencia de `Executors` (como `newFixedThreadPool`) en producción.
+(pista: tiene que ver con colas ilimitadas y `OutOfMemoryError`).
+
+---
+
+## 13. Tareas programadas con `ScheduledExecutorService`
+
+### Reto 13.1 — Reemplazo de Timer
+Reescribe el Reto 7.1 (delay único) usando `ScheduledExecutorService.schedule()` en vez de `Timer`.
+
+### Reto 13.2 — scheduleAtFixedRate vs scheduleWithFixedDelay
+Reescribe el Reto 8.2 usando `scheduleAtFixedRate()` y `scheduleWithFixedDelay()` de `ScheduledExecutorService`.
+Compara con tu implementación anterior usando `Timer` — ¿qué ventaja tiene sobre `Timer`? (pista: qué pasa si
+una tarea lanza una excepción en `Timer` vs en `ScheduledExecutorService`).
+
+### Reto 13.3 — Caso real: monitor de salud
+Simula un "health check" que cada 3 segundos verifica el estado de 3 "servicios"
+(puedes simularlos con `Random` que devuelva `true`/`false`). Si un servicio falla,
+imprime una alerta. Usa `ScheduledExecutorService` con pool de tamaño 3 (uno por servicio, corriendo en paralelo).
+
+---
+
+## 14. PROYECTO INTEGRADOR — Sistema de Procesamiento de Pedidos (caso real de industria)
+
+Este es el ejercicio donde combinas todo. Simula un sistema simplificado tipo e-commerce.
+
+### Contexto
+Una tienda online recibe pedidos. Cada pedido debe pasar por 3 etapas:
+**validación de stock**, **procesamiento de pago**, y **notificación al cliente**.
+Quieres procesar múltiples pedidos en paralelo mientras controlas la carga sobre tus
+"servicios externos" (simulados).
+
+### Requisitos técnicos (mapeo con lo aprendido):
+
+1. **Modelo `Pedido`**: clase con `id`, `cliente`, `monto`, `estado` (enum: `PENDIENTE`,
+`VALIDADO`, `PAGADO`, `NOTIFICADO`, `FALLIDO`).
+
+2. **`ThreadPoolExecutor` personalizado** (tema 12) para procesar pedidos entrantes:
+`corePoolSize=4`, `maximumPoolSize=8`, cola acotada, con `CallerRunsPolicy` como estrategia
+de rechazo (para no perder pedidos bajo carga alta).
+
+3. **Cada pedido se procesa como una tarea `Callable<Pedido>`** (tema 10) que:
+   - Simula validación de stock (`sleep` aleatorio 200-500ms, con 10% de probabilidad de
+   fallar → lanza excepción).
+   - Simula pago (`sleep` 300-800ms, 5% de probabilidad de fallar).
+   - Si ambos pasos ok, cambia estado a `NOTIFICADO`.
+
+4. **Acceso concurrente seguro a un contador de estadísticas** (tema 5): una clase
+`EstadisticasProcesamiento` con contadores de `exitosos` y `fallidos`, protegida con
+`synchronized` o con locks dedicados.
+
+5. **`ScheduledExecutorService`** (tema 13) que cada 5 segundos imprime un "reporte"
+con las estadísticas acumuladas (usa `scheduleAtFixedRate`).
+
+6. **Manejo de resultados con `Future`** (tema 10): guarda todos los `Future<Pedido>`
+en una lista, y al final del programa (o cada cierto tiempo) recórrelos para saber
+cuáles terminaron, cuáles fallaron, y actualizar las estadísticas.
+
+7. **Cierre correcto**: al terminar de enviar todos los pedidos, cierra el
+`ThreadPoolExecutor` y el `ScheduledExecutorService` correctamente con `shutdown()`/`
+awaitTermination()`, esperando a que termine el procesamiento pendiente.
+
+### Bonus (si quieres llevarlo más lejar hacia lo real):
+- Usa `BlockingQueue<Pedido>` como cola de entrada, con un hilo "productor" que simula
+pedidos llegando cada 100-300ms (patrón productor-consumidor del tema 6, pero con clases
+modernas en vez de `wait/notify` manual).
+- Agrega un `CountDownLatch` para esperar a que los primeros N pedidos terminen antes de
+imprimir un resumen inicial (concepto nuevo, útil que lo investigues: es primo hermano
+de `join()` pero para múltiples tareas).
+
+---
+
+## Cómo usar esta guía
+
+1. Ve tema por tema, en orden — cada uno depende conceptualmente del anterior.
+2. No pases al siguiente tema hasta que puedas explicar en voz alta (sin ver el código) qué hace y por qué.
+3. El proyecto integrador (14) es donde realmente conectarás esto con cómo se ve el trabajo diario
+de un dev Java en un equipo — la mayoría del código de concurrencia "real" en producción usa
+`ExecutorService`/`Future`/`ScheduledExecutorService`, casi nunca `Thread`/`wait`/`notify`
+directamente (eso se enseña porque es la base conceptual).
+
+Cuéntame en qué tema te quedas trabado y lo revisamos juntos, o si prefieres, dime cuál es el
+proyecto real que quieres desarrollar y adapto el ejercicio 14 a ese dominio específico (ej.
+sistema de reservas, procesamiento de imágenes, scraping concurrente, etc).
