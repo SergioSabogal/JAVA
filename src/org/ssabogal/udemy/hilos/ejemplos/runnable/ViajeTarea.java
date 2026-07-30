@@ -4,21 +4,27 @@ import java.util.Random;
 
 public class ViajeTarea implements Runnable{
 
-    String nombre;
-    public ViajeTarea(String nombre){
+    private String nombre;
+
+    public ViajeTarea(String nombre) {
         this.nombre = nombre;
     }
+
+    public String getNombre() {
+        return nombre;
+    }
+
     @Override
     public void run() {
-         for (int i = 0; i < 10; i++){
-             System.out.println(i+ ". Tarea :" + this.nombre);
+        for (int i=0; i<10; i++){
+            System.out.println(i + ". "+  this.nombre);
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
 
-             try{
-                 Thread.sleep((int)(Math.random()*1000));
-             } catch (InterruptedException e) {
-                 throw new RuntimeException(e);
-             }
-         }
-        System.out.println("Finalizanda tarea " + this.nombre);
+        System.out.println("Fialmente... : "+ this.nombre);
     }
 }

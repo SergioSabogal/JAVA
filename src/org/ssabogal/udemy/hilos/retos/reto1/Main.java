@@ -16,10 +16,7 @@ public class Main {
 
         //Ejercicio 1.2
 
-        ImprimeLetras
 
-        t1.start();
-        t2.start();
 
 
 

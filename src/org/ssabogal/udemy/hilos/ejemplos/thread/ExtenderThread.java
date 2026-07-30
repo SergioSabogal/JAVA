@@ -3,12 +3,16 @@ package org.ssabogal.udemy.hilos.ejemplos.thread;
 public class ExtenderThread {
     public static void main(String[] args) {
 
-        Thread hilo = new NombreThread("Backup...");
+        Thread backup = new NombreThread("Backup 2026");
+        backup.start();
+
+
+        NombreThread tarea = new NombreThread("Revisión automatica");
+        tarea.start();
+
+
+        Thread hilo = new NombreThread("Hilo 1");
         hilo.start();
 
-        System.out.println("Hilo iniciado");
-        System.out.println(hilo.getState());
-
-        System.out.println("Hilo finalizado");
     }
 }

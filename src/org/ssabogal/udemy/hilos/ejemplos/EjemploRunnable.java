@@ -5,11 +5,10 @@ import org.ssabogal.udemy.hilos.ejemplos.runnable.ViajeTarea;
 public class EjemploRunnable {
     public static void main(String[] args) {
 
-        Thread backup = new Thread(new ViajeTarea("Proceso"));
-        Thread hilo = new Thread(new ViajeTarea("Actualización de datos"));
+       new Thread(new ViajeTarea("Colombia")).start();
+       new Thread(new ViajeTarea("España")).start();
+       new Thread(new ViajeTarea("Uruguay")).start();
 
-        backup.start();
-        hilo.start();
 
 
 
