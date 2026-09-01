@@ -17,10 +17,6 @@ public class Main {
         tareas.add(new Tarea(6, Prioridad.BAJA, "PC lento", false));
         tareas.add(new Tarea(7, Prioridad.ALTA, "Copia de seguridad faltante", false));
 
-
-
-
-
         /*
         *1. Marcar como completada todas las taeas con prioridad alta
         * 2.Imprimir el detalle de las tareas pendientes
