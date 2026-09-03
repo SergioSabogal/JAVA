@@ -9,7 +9,7 @@ public class EjemploStream {
 
         System.out.println("**************");
         System.out.println("\n\n\nMETODO 1");
-git         Stream<String> nombres = Stream.of("RECUPERADOS","MANTENIMIENTO","LAMINA","PRODUCCION");
+        Stream<String> nombres = Stream.of("RECUPERADOS","MANTENIMIENTO","LAMINA","PRODUCCION");
         nombres.forEach(System.out::println);
 
         System.out.println("**************");
