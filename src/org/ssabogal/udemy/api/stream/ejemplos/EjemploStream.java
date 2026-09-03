@@ -38,5 +38,18 @@ public class EjemploStream {
         System.out.println("");
         lista.stream().forEach(System.out::println);
 
+
+
+        // COmo convertir un flujod e Stream a otro tipo de dato
+        //-- Hacerlo
+
+
+        /* Operador Filter: recibe una operacion lambda eejemplo
+
+           .filter(u -> u.getnombre().equals("Pepe") )
+        */
+
+
+
     }
 }
